@@ -1,0 +1,38 @@
+name: enterprise level CI CD for testing
+on:
+  push:
+    branches: 
+      - qa
+    paths:
+      - client/**
+      - server/**
+      - .github/workflow/qa_ci-cd.yaml
+
+jobs:
+  gitleak-scan:
+    name: GitLeak Scan 
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v4
+
+      - name: Run gitlicks scan 
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:repo" \
+            zricethevzav/gitleaks:latest detect \
+            --source=/repo \
+            --report-format=json \
+            --report-pat=/repo/gitleaks-report.json \
+            --redact \
+            --exit-code 0
+
+      - name: Upload Gitleaks report
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-report
+          path: gitleaks-report.json
+          if-no-files-found: warn
+      
+
+  
