@@ -110,7 +110,7 @@ jobs:
           path: client-trivy-fs-report.txt
           if-no-files-found: warn
 
-  server-trivy-fs:
+server-trivy-fs:
     name: Server Trivy FS Scan
     runs-on: ubuntu-latest
     needs: gitleaks-scan
